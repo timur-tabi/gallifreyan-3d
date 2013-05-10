@@ -90,8 +90,6 @@ def translate_word(word):
                 i += 1
             else:
                 letters.append(c)
-        else:
-            letters.append(c)
 
     return letters
 
