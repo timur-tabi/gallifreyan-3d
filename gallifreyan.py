@@ -93,5 +93,5 @@ def translate_word(word):
 
     return letters
 
-letters = translate_word(sys.argv[1])
+letters = translate_word(sys.argv[1].lower())
 print letters
