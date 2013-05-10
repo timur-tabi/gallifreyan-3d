@@ -11,8 +11,6 @@
 #   http://www.shermansplanet.com/gallifreyan
 
 import sys
-import os
-import re
 
 # Translates a single word into a list of Gallifreyan letters
 # a b ch d e f g h i j k l m n ng o p qu r t th s sh u v w x y z
@@ -21,8 +19,18 @@ def translate_word(word):
     length = len(word)
 
     i = 0
+    # Loop through the word, one letter at a time.  This is a look-ahead
+    # algorithm, because we need to parse digraphs by looking at the next
+    # letter, and converting both Latin letters into one Gallifreyan letter.
+    #
+    # We use a while-loop because when we parse a digraph, we want to skip a
+    # letter, and we can't do that with a for-loop in Python.  The alternative
+    # is to use a state machine, but this approach is simpler.
+    #
+    # Not that we always treat "ch", "ng", "qu", "sh", and "th", as digraphs.
+    # That is, whenever we see "t" and "h" together, we assume it's the "th"
+    # digraph.  This breaks with some words, like "lighthouse".
     while i < length:
-        # This is a look-ahead algorithm
         c = word[i]
         i += 1
 
@@ -32,15 +40,19 @@ def translate_word(word):
             letters.append(c)
             continue
 
+        # c2 is the next letter, if there is one
         c2 = word[i] if i < length else None
 
+        # Test for digraphs
         if c == 'c':
+            # There is no "c" in Gallifreyan, so either it's "ch", or we
+            # replace it with "s" or "k"
             if c2 == 'h':
                 # Does not work for words where "ch" is pronounced like "sh"
                 letters.append('ch')
                 i += 1
             elif c2 == 'k':
-                # "ck" becomes "k"
+                # "ck" becomes "k".  This might be wrong.
                 letters.append('k')
                 i += 1
             elif c2 in ['a', 'o', 'u', 'l', 'r', None]:
